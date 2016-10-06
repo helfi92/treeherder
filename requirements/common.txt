@@ -100,3 +100,6 @@ urllib3==1.16 --hash=sha256:8a46ee9b6b4487ba994e97f9e5eab48513c9b3ebdddc630ee9a8
 certifi==2016.2.28 --hash=sha256:75c33d546e0a732a4606749cbadcd81929f30d8b814061ca93cde49933dbb860
 
 django-memoize==2.0.0 --hash sha256:bd35702eabdbd6dc0a11463c688e2b7f2e9f584ee489ba021a825bff486aa77f
+
+# Used for Taskcluster auth
+taskcluster==0.3.4 --hash sha256:d4fe5e2a44fe27e195b92830ece0a6eb9eb7ad9dc556a0cb16f6f2a6429f1b65
