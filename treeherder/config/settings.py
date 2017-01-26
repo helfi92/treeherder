@@ -18,6 +18,7 @@ def server_supports_tls(url):
     # but until Travis has support it's not overly useful.
     return hostname != 'localhost'
 
+
 TREEHERDER_MEMCACHED = env("TREEHERDER_MEMCACHED", default="127.0.0.1:11211")
 TREEHERDER_MEMCACHED_KEY_PREFIX = env("TREEHERDER_MEMCACHED_KEY_PREFIX", default="treeherder")
 
@@ -62,9 +63,7 @@ PERFHERDER_ALERTS_MAX_AGE = timedelta(weeks=2)
 
 # SETA configuration
 SETA_HIGH_VALUE_PRIORITY = 1
-SETA_HIGH_VALUE_TIMEOUT = 0
 SETA_LOW_VALUE_PRIORITY = 5
-SETA_LOW_VALUE_TIMEOUT = 5400
 
 
 # Create hashed+gzipped versions of assets during collectstatic,

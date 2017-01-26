@@ -651,11 +651,8 @@ class Job(models.Model):
 
     id = models.BigAutoField(primary_key=True)
     repository = models.ForeignKey(Repository)
-    guid = models.CharField(max_length=50, unique=True, db_index=True)
-    # indexing this column to make eventual migration of performance artifacts
-    # faster (since we'll need to cross-reference those row-by-row), see
-    # https://bugzilla.mozilla.org/show_bug.cgi?id=1265503
-    project_specific_id = models.PositiveIntegerField(db_index=True, null=True)
+    guid = models.CharField(max_length=50, unique=True)
+    project_specific_id = models.PositiveIntegerField(null=True)
 
     coalesced_to_guid = models.CharField(max_length=50, null=True,
                                          default=None)
@@ -675,7 +672,7 @@ class Job(models.Model):
     submit_time = models.DateTimeField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    last_modified = models.DateTimeField(auto_now=True)
+    last_modified = models.DateTimeField(auto_now=True, db_index=True)
     running_eta = models.PositiveIntegerField(null=True, default=None)
     tier = models.PositiveIntegerField()
 
@@ -692,6 +689,9 @@ class Job(models.Model):
             ('repository', 'option_collection_hash', 'job_type', 'start_time'),
             ('repository', 'build_platform', 'option_collection_hash',
              'job_type', 'start_time'),
+            # this is intended to speed up queries for specific platform /
+            # option collections on a push
+            ('machine_platform', 'option_collection_hash', 'push'),
         ]
 
     def __str__(self):

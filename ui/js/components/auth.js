@@ -13,7 +13,7 @@ treeherder.component("login", {
         <span class="dropdown"
               ng-if="$ctrl.user.loggedin">
           <button id="logoutLabel" title="Logged in as: {{$ctrl.user.email}}" role="button"
-                  data-toggle="dropdown" data-target="#"
+                  data-toggle="dropdown"
                   class="btn btn-view-nav btn-right-navbar">
             <div class="nav-user-icon">
               <span class="fa fa-user pull-left"></span>
@@ -135,6 +135,7 @@ treeherder.component("login", {
 
             ctrl.setLoggedOut = function() {
                 localStorageService.set("user", loggedOutUser);
+                localStorageService.set('taskcluster.credentials', {});
                 ctrl.user = loggedOutUser;
                 ctrl.onUserChange({$event: {user: loggedOutUser}});
             };
@@ -155,18 +156,22 @@ treeherder.component("loginCallback", {
             const host = $location.host();
             const port = $location.port();
             const loginUrl = `${$location.protocol()}://${host}:${port}/api/auth/login/`;
-            const certificate = $location.search().certificate;
             const credentials = {
                 id: $location.search().clientId,
                 key: $location.search().accessToken,
                 algorithm: 'sha256'
             };
+
             this.loginError = null;
             var payload = {
                 credentials: credentials,
             };
-            if (certificate) {
-                payload.ext = hawk.utils.base64urlEncode(JSON.stringify({"certificate": JSON.parse(certificate)}));
+
+            // Cribbed from taskcluster-tools. Save this for interacting with tc
+            const results = $location.search();
+            if (results.certificate) {
+                results.certificate = JSON.parse(results.certificate);
+                payload.ext = hawk.utils.base64urlEncode(JSON.stringify({"certificate": results.certificate}));
             }
 
             const header = hawk.client.header(loginUrl, 'GET', payload);
@@ -179,6 +184,7 @@ treeherder.component("loginCallback", {
                     var user = resp.data;
                     user.loggedin = true;
                     localStorageService.set("user", user);
+                    localStorageService.set('taskcluster.credentials', results);
                     $window.close();
                 }, function(data) {
                     $scope.loginError = data.data.detail;
